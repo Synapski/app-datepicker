@@ -4,6 +4,7 @@ interface ParamUpdatedChanged extends Omit<Datepicker, keyof LitElement> {
   _startView: StartView;
 }
 
+import '@material/mwc-icon';
 import {
   css,
   eventOptions,
@@ -13,13 +14,14 @@ import {
   query,
   TemplateResult,
 } from 'lit-element';
+import { nothing } from 'lit-html';
 import { cache } from 'lit-html/directives/cache.js';
 import { classMap } from 'lit-html/directives/class-map.js';
 import { repeat } from 'lit-html/directives/repeat.js';
 
-import { toUTCDate } from 'nodemod/dist/calendar/helpers/to-utc-date.js';
-import type { WeekNumberType } from 'nodemod/dist/calendar/typings.js';
 import { iconChevronLeft, iconChevronRight } from './app-datepicker-icons.js';
+import { toUTCDate } from './calendar/helpers/to-utc-date.js';
+import type { WeekNumberType } from './calendar/typings.js';
 import { datepickerVariables, resetButton } from './common-styles.js';
 import { ALL_NAV_KEYS_SET } from './constants.js';
 import type {
@@ -341,6 +343,11 @@ export class Datepicker extends LitElement {
     .full-calendar__day.day--disabled:not(.day--today) {
       color: var(--app-datepicker-disabled-day-color, rgba(0, 0, 0, .55));
     }
+    .full-calendar__day mwc-icon.highlighted {
+      transform: translate(4px, 4px);
+      --mdc-icon-size: 14px;
+      position: absolute;
+    }
 
     .year-list-view__list-item {
       position: relative;
@@ -482,6 +489,9 @@ export class Datepicker extends LitElement {
 
   @property({ type: String })
   public disabledDates: string = '';
+
+  @property({ type: String })
+  public highlightedDates: string = '';
 
   @property({ type: String })
   public weekLabel: string = 'Wk';
@@ -803,6 +813,7 @@ export class Datepicker extends LitElement {
     } = this._formatters;
     const disabledDays = splitString(this.disabledDays, Number);
     const disabledDates = splitString(this.disabledDates, getResolvedDate);
+    const highlightedDates = splitString(this.highlightedDates, getResolvedDate);
     const showWeekNumber = this.showWeekNumber;
     const $focusedDate = this._focusedDate;
     const firstDayOfWeek = this.firstDayOfWeek;
@@ -819,6 +830,7 @@ export class Datepicker extends LitElement {
       firstDayOfWeek,
 
       disabledDays,
+      highlightedDates,
       disabledDates,
       locale: this.locale,
       selectedDate: $selectedDate,
@@ -880,7 +892,7 @@ export class Datepicker extends LitElement {
             calendar.map((calendarRow) => {
               return html`<tr role="row">${
                 calendarRow.map((calendarCol, i) => {
-                  const { disabled, fullDate, label, value } = calendarCol;
+                  const { disabled, highlighted, fullDate, label, value } = calendarCol;
 
                   /** Week label, if any */
                   if (!fullDate && value && showWeekNumber && i < 1) {
@@ -911,6 +923,7 @@ export class Datepicker extends LitElement {
                       'day--disabled': disabled,
                       'day--today': +todayDate === curTime,
                       'day--focused': !disabled && isCurrentDate,
+                      'day--highlighted': highlighted,
                     })}"
                     part="calendar-day"
                     role="gridcell"
@@ -921,6 +934,7 @@ export class Datepicker extends LitElement {
                     .day="${value}"
                   >
                     <div class="calendar-day" part="day">${value}</div>
+                    ${highlighted ? html`<mwc-icon class="highlighted">cached</mwc-icon>` : nothing}
                   </td>
                   `;
                 })

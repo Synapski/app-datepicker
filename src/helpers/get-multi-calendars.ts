@@ -1,7 +1,7 @@
-import { getWeekdays } from 'nodemod/dist/calendar/helpers/get-weekdays.js';
-import { toUTCDate } from 'nodemod/dist/calendar/helpers/to-utc-date.js';
-import { calendar } from 'nodemod/dist/calendar/index.js';
-import type { Calendar, CalendarWeekday, DateTimeFormatter, WeekNumberType } from 'nodemod/dist/calendar/typings.js';
+import { getWeekdays } from '../calendar/helpers/get-weekdays.js';
+import { toUTCDate } from '../calendar/helpers/to-utc-date.js';
+import { calendar } from '../calendar/index.js';
+import type { Calendar, CalendarWeekday, DateTimeFormatter, WeekNumberType } from '../calendar/typings.js';
 
 interface MultiCalendars extends NonNullable<Omit<Calendar, 'calendar' | 'key'>> {
   key: string;
@@ -18,6 +18,7 @@ interface GetMultiCalendarsOption {
   selectedDate: Date;
 
   disabledDates?: Date[];
+  highlightedDates?: Date[];
   disabledDays?: number[];
   firstDayOfWeek?: number;
   max?: Date;
@@ -39,6 +40,7 @@ export function getMultiCalendars(
     selectedDate,
 
     disabledDates,
+    highlightedDates,
     disabledDays,
     firstDayOfWeek,
     max,
@@ -61,6 +63,7 @@ export function getMultiCalendars(
     locale,
     date.toJSON(),
     disabledDates?.join('_'),
+    highlightedDates?.join('_'),
     disabledDays?.join('_'),
     firstDayOfWeek,
     max?.toJSON(),
@@ -93,6 +96,7 @@ export function getMultiCalendars(
 
         calendar: [],
         disabledDatesSet: new Set(),
+        highlightedDatesSet: new Set(),
         disabledDaysSet: new Set(),
       };
     }
@@ -102,6 +106,7 @@ export function getMultiCalendars(
       fullDateFormat,
       locale,
       disabledDates,
+      highlightedDates,
       disabledDays,
       firstDayOfWeek,
       max,
@@ -117,11 +122,13 @@ export function getMultiCalendars(
 
   const calendars: MultiCalendars['calendars'] = [];
   const $disabledDatesSet: MultiCalendars['disabledDatesSet'] = new Set();
+  const $highlightedDatesSet: MultiCalendars['highlightedDatesSet'] = new Set();
   const $disabledDaysSet: MultiCalendars['disabledDaysSet'] = new Set();
 
   for (const cal of calendarsList) {
     const {
       disabledDatesSet,
+      highlightedDatesSet,
       disabledDaysSet,
       ...rest
     } = cal;
@@ -134,6 +141,10 @@ export function getMultiCalendars(
       if (disabledDatesSet.size > 0) {
         for (const o of disabledDatesSet) $disabledDatesSet.add(o);
       }
+
+      if (highlightedDatesSet.size > 0) {
+        for (const o of highlightedDatesSet) $highlightedDatesSet.add(o);
+      }
     }
 
     calendars.push(rest);
@@ -144,6 +155,7 @@ export function getMultiCalendars(
     weekdays,
 
     disabledDatesSet: $disabledDatesSet,
+    highlightedDatesSet: $highlightedDatesSet,
     disabledDaysSet: $disabledDaysSet,
     key: getKey(selectedDate),
   };

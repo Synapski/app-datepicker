@@ -5,7 +5,7 @@ export type DatepickerDialogOpened = DatepickerDialogClosed & DatepickerFirstUpd
 
 import '@material/mwc-button/mwc-button.js';
 import { css, html, LitElement, property, query } from 'lit-element';
-import type { WeekNumberType } from 'nodemod/dist/calendar/typings.js';
+import type { WeekNumberType } from './calendar/typings.js';
 
 import { datepickerVariables } from './common-styles.js';
 import type {
@@ -154,6 +154,9 @@ export class DatepickerDialog extends LitElement {
   public disabledDates?: string;
 
   @property({ type: String })
+  public highlightedDates?: string;
+
+  @property({ type: String })
   public weekLabel: string = 'Wk';
 
   @property({ type: Number })
@@ -298,6 +301,7 @@ export class DatepickerDialog extends LitElement {
       .weekNumberType="${this.weekNumberType}"
       .disabledDays="${this.disabledDays}"
       .disabledDates="${this.disabledDates}"
+      .highlightedDates="${this.highlightedDates}"
       .landscape="${this.landscape}"
       .locale="${this.locale}"
       .startView="${this.startView}"
