@@ -57,6 +57,7 @@
     "clean": "shx rm -rf dist/ src/tests/snapshots/*.png logs/ .*cache *.log",
     "lint": "tslint --project tsconfig.json --config tslint.prod.json --format stylish",
     "lint:dev": "tslint --config tslint.json --project tsconfig.json --format stylish",
+    "prepare": "npm run build",
     "prepublishOnly": "npm run lint && npm run build:prod",
     "serve": "es-dev-server --watch --port 3001 --node-resolve --dedupe",
     "test": "npm run build:config && npm run test:dev",
