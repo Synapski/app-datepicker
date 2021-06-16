@@ -4,7 +4,6 @@ interface ParamUpdatedChanged extends Omit<Datepicker, keyof LitElement> {
   _startView: StartView;
 }
 
-import '@material/mwc-icon';
 import {
   css,
   eventOptions,
@@ -343,10 +342,17 @@ export class Datepicker extends LitElement {
     .full-calendar__day.day--disabled:not(.day--today) {
       color: var(--app-datepicker-disabled-day-color, rgba(0, 0, 0, .55));
     }
-    .full-calendar__day mwc-icon.highlighted {
-      transform: translate(4px, 4px);
-      --mdc-icon-size: 14px;
+    .full-calendar__day div.highlighted {
+      background-color: var(--app-datepicker-accent-color, #1a73e8);
+      border-radius: 50%;
+      height: 6px;
       position: absolute;
+      transform: translate(28px, -13px);
+      width: 6px;
+    }
+    .full-calendar__day.day--focused div.highlighted {
+      background-color: var(--app-datepicker-focused-day-color, #fff);
+      z-index: 1;  
     }
 
     .year-list-view__list-item {
@@ -934,7 +940,7 @@ export class Datepicker extends LitElement {
                     .day="${value}"
                   >
                     <div class="calendar-day" part="day">${value}</div>
-                    ${highlighted ? html`<mwc-icon class="highlighted">cached</mwc-icon>` : nothing}
+                    ${highlighted ? html`<div class="highlighted"></div>` : nothing}
                   </td>
                   `;
                 })
