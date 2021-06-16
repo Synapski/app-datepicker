@@ -352,7 +352,7 @@ export class Datepicker extends LitElement {
     }
     .full-calendar__day.day--focused div.highlighted {
       background-color: var(--app-datepicker-focused-day-color, #fff);
-      z-index: 1;  
+      z-index: 1;
     }
 
     .year-list-view__list-item {
